@@ -23,3 +23,12 @@ router
     controller.deleteFromList,
 )
 
+router
+  .route('/fetch')
+  .get(
+    authorize(),
+    validate(validations.fetchList, { allowUnknown: true }),
+    controller.fetchUserContentList,
+  );
+
+module.exports = router;

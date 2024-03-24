@@ -59,3 +59,61 @@ exports.deleteFromList = async (req, res, next) => {
   }
 };
 
+exports.fetchUserContentList = async (req, res, next) => {
+  try {
+    const { content_type: contentType, page, limit } = req.query;
+    const userId = req.user.id;
+    const user = await User.findOne({
+      where: { id: userId },
+
+    });
+
+    if (!user) {
+      throw new APIError({ status: 404, message: 'User not found' });
+    }
+    const pagination = paginate(page, limit);
+    const userList = await UserList.findAndCountAll({
+      where: {
+        user_id: userId,
+        ...(contentType ? { content_type: contentType } : {}),
+      },
+      distinct: true,
+      include: [
+        {
+          model: Movie,
+          raw: true,
+        },
+        {
+          model: TvShow,
+          raw: true,
+        },
+      ],
+      ...pagination,
+      order: [['id', 'ASC']],
+    });
+    if (!userList) {
+      throw new APIError({
+        status: 404,
+        message: 'No content found in user list',
+      });
+    }
+
+    return res.json({
+      status: 200,
+      message: 'Content list fetched successfully',
+      data: {
+        userList: userList.rows.map((item) => {
+          if (item.content_type === 'MOVIE') {
+            return { content_data: item.Movie, content_type: 'MOVIE' };
+          }
+          if (item.content_type === 'TV') {
+            return { content_data: item.TvShow, content_type: 'TV' };
+          }
+          return null;
+        }),
+      },
+    });
+  } catch (error) {
+    return next(error);
+  }
+};

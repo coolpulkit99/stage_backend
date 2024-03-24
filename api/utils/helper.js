@@ -31,3 +31,13 @@ exports.fetchUserListContent = async (userId, contentId, contentType) => {
   }
   return userlistItem;
 };
+
+exports.paginate = (page = 1, pageSize = 10) => {
+  const offset = (page - 1) * pageSize;
+  const limit = pageSize;
+
+  return {
+    offset,
+    limit,
+  };
+};
