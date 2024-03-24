@@ -15,3 +15,11 @@ router
     controller.addToList,
   );
 
+router
+  .route('/delete')
+  .delete(
+    authorize(),
+    validate(validations.deleteFromList, { allowUnknown: true }),
+    controller.deleteFromList,
+)
+

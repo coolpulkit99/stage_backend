@@ -36,3 +36,26 @@ exports.addToList = async (req, res, next) => {
     return next(error);
   }
 };
+
+exports.deleteFromList = async (req, res, next) => {
+  try {
+    const { content_id: contentId, content_type: contentType } = req.body;
+    const userId = req.user.id;
+
+    const userListItem = await fetchUserListContent(userId, contentId, contentType);
+    if (!userListItem) {
+      throw new APIError({
+        status: 400,
+        message: 'Content not present in users list',
+      });
+    }
+    await userListItem.destroy();
+    return res.json({
+      status: 200,
+      message: 'Content delete from list successfully',
+    });
+  } catch (error) {
+    return next(error);
+  }
+};
+
