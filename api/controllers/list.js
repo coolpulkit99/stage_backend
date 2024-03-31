@@ -1,5 +1,7 @@
+const { fetchUserListContent } = require('../services/list.services');
 const APIError = require('../utils/APIError');
-const { fetchUserListContent, paginate } = require('../utils/helper');
+const { CONTENT_TYPES } = require('../utils/enums');
+const { paginate } = require('../utils/helper');
 
 const {
   User, Movie, TvShow, UserList,
@@ -13,24 +15,24 @@ exports.addToList = async (req, res, next) => {
     const userlistItem = await fetchUserListContent(userId, contentId, contentType);
 
     if (userlistItem) {
-      throw new APIError({ status: 400, message: 'Content already added to users list' });
+      throw new APIError({ status: 409, message: 'Already added to list' });
     }
     let contentObject;
     switch (contentType) {
-      case 'MOVIE':
+      case CONTENT_TYPES.MOVIE:
         contentObject = { movie_id: contentId };
         break;
-      case 'TV':
+      case CONTENT_TYPES.TV:
         contentObject = { tv_show_id: contentId };
         break;
       default:
-        throw new APIError({ status: 404, message: 'Invalid content type' });
+        throw new APIError({ status: 400, message: 'Invalid content type' });
     }
 
     await UserList.create({ user_id: userId, ...contentObject, content_type: contentType });
     return res.json({
       status: 200,
-      message: 'Content added to users list successfully',
+      message: 'Added to list successfully',
     });
   } catch (error) {
     return next(error);
@@ -45,14 +47,14 @@ exports.deleteFromList = async (req, res, next) => {
     const userListItem = await fetchUserListContent(userId, contentId, contentType);
     if (!userListItem) {
       throw new APIError({
-        status: 400,
-        message: 'Content not present in users list',
+        status: 409,
+        message: 'Content not present in list',
       });
     }
     await userListItem.destroy();
     return res.json({
       status: 200,
-      message: 'Content delete from list successfully',
+      message: 'Removed from list successfully',
     });
   } catch (error) {
     return next(error);
@@ -68,9 +70,6 @@ exports.fetchUserContentList = async (req, res, next) => {
 
     });
 
-    if (!user) {
-      throw new APIError({ status: 404, message: 'User not found' });
-    }
     const pagination = paginate(page, limit);
     const userList = await UserList.findAndCountAll({
       where: {
@@ -103,11 +102,11 @@ exports.fetchUserContentList = async (req, res, next) => {
       message: 'Content list fetched successfully',
       data: {
         userList: userList.rows.map((item) => {
-          if (item.content_type === 'MOVIE') {
-            return { content_data: item.Movie, content_type: 'MOVIE' };
+          if (item.content_type === CONTENT_TYPES.MOVIE) {
+            return { content_data: item.Movie, content_type: CONTENT_TYPES.MOVIE };
           }
-          if (item.content_type === 'TV') {
-            return { content_data: item.TvShow, content_type: 'TV' };
+          if (item.content_type === CONTENT_TYPES.TV) {
+            return { content_data: item.TvShow, content_type: CONTENT_TYPES.TV };
           }
           return null;
         }),
