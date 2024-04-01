@@ -7,6 +7,8 @@
 3. Run a local instance of pgsql or update the envs to use a hosted service 
 4. Run the application using ```npm run dev``` or ```node index.js```
 5. Use the curls below with respective data to run respective APIs
+or
+5. Use ```npm run test``` to run the test suites
 
 
 ### Feature design guide
