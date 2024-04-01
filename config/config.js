@@ -9,4 +9,11 @@ module.exports = {
     logging: true,
     timezone: 'Asia/Calcutta',
   },
+  test: {
+    database: process.env.TEST_DATABASE_NAME,
+    dialect: 'postgres',
+    logging: true,
+    timezone: 'Asia/Calcutta',
+    storage: ":memory:",
+  },
 };

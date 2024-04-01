@@ -6,6 +6,8 @@ const sequelize = require('./config/sequelize');
 sequelize.init();
 const app = require('./config/express');
 
-app.listen(port, () => console.info(`server started on port ${port} (${env})`));
+if (process.env.NODE_ENV !== 'test') {
+    app.listen(port, () => console.info(`server started on port ${port} (${env})`));
+}
 
 module.exports = app;
