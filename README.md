@@ -45,3 +45,7 @@ curl --location --request GET 'localhost:3010/api/list/fetch?content_type=MOVIE&
 --header 'Authorization: {"id":"fd6b8311-91d4-4ffa-9f17-7e480b31b9c9"}' \
 --header 'Content-Type: application/json'
 ```
+
+
+Hosted DB: https://api.elephantsql.com
+Hosted Backend: https://misty-vest-lamb.cyclic.app/api/status (Service used Cyclic Sh)
