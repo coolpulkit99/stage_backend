@@ -7,7 +7,7 @@
     "test": "jest",
     "dev": "nodemon index.js",
     "prod": "nodemon index.js",
-    "deploy:dev": "shipit dev deploy",
+    "deploy:dev": "npm i",
     "migrate": "sequelize db:migrate"
   },
   "author": "apoorv99goyal@gmail.com",
